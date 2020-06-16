@@ -15,7 +15,21 @@
     <hr>
     <div id="apps" class="col-sm-3 col-sm-offset-4 frame">
         
-        <ul></ul>
+        <ul>
+            <div v-for="item in reponse">
+            <li style="width:100%">
+                    
+                <div v-if="item.user" class="msj macro">
+                <div class="avatar"><img class="img-circle" style="width:100%;" /></div>
+                    <div class="text text-l">
+                        <p> ${item.user} </p>
+                        <p> ${item.mes} </p>
+                        <p><small>${date}</small></p> 
+                    </div>
+                </div>
+            </li>
+        </div>
+        </ul>
         <div>
             <div class="msj-rta macro">                        
                 <div class="text text-r" style="background:whitesmoke !important">
@@ -29,7 +43,7 @@
         </div>
     </div>  
 
-    <script src="/static/js/main.js"></script>
+    <!-- <script src="/static/js/main.js"></script> -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
@@ -45,6 +59,7 @@
             message: "",
             reponse: [],
             username:"Annonyme",
+            date:'',
         
 
         },
@@ -52,6 +67,8 @@
         mounted: function() {
             
             this.connect()
+            this.username = '{{request.user.username}}';
+            this.date = new Date().toLocaleString();
             
         },
         methods: {
@@ -68,10 +85,11 @@
                     //   Recuperation message
                     wsdata = JSON.parse(data)
                     console.log(wsdata.message.mes)
-                    this.reponse.push(wsdata.message)    
+                    this.reponse.push(wsdata.message) 
                     console.log(this.reponse)
+                    
 
-                    insertChat("me","mymessage")
+                    
                     
                    
                     };
