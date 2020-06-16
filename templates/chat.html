@@ -13,17 +13,18 @@
 <body>
     <hr>
     <hr>
-    <div class="col-sm-3 col-sm-offset-4 frame">
+    <div id="apps" class="col-sm-3 col-sm-offset-4 frame">
+        
         <ul></ul>
         <div>
             <div class="msj-rta macro">                        
                 <div class="text text-r" style="background:whitesmoke !important">
-                    <input class="mytext" placeholder="Type a message"/>
+                    <input v-model="message" class="mytext" placeholder="Type a message"/>
                 </div> 
 
             </div>
             <div style="padding:10px;">
-                <span class="glyphicon glyphicon-share-alt"></span>
+                <span @click="sendmessage" class="glyphicon glyphicon-share-alt"></span>
             </div>                
         </div>
     </div>  
@@ -31,5 +32,80 @@
     <script src="/static/js/main.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reconnecting-websocket@4.1.10/dist/reconnecting-websocket-cjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-websocket@0.2.3/dist/vue-websocket.min.js"></script>
+
+
+    <script>
+        const app = new Vue({
+        el: "#apps",
+        data: {
+            message: "",
+            reponse: [],
+            username:"Annonyme",
+        
+
+        },
+        delimiters: ["${", "}"],
+        mounted: function() {
+            
+            this.connect()
+            
+        },
+        methods: {
+           
+            connect() {
+                roomName = "salon"
+                this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
+                this.socket.onopen = () => {
+                    this.status = "connected";
+                    console.log("connecte")
+                    
+                    this.socket.onmessage = ({data}) => {
+                        
+                    //   Recuperation message
+                    wsdata = JSON.parse(data)
+                    console.log(wsdata.message.mes)
+                    this.reponse.push(wsdata.message)    
+                    console.log(this.reponse)
+
+                    insertChat("me","mymessage")
+                    
+                   
+                    };
+                };
+            },
+            disconnect() {
+                this.socket.close();
+                
+                console.log("deconnecte")
+            },
+            
+            
+            sendmessage: function(){
+                
+                data = {
+                    'message':{ 'mes':this.message,
+                    'user':this.username }
+                }
+                    this.socket.send(JSON.stringify(data));
+                    
+                    
+                }
+               
+            },
+              
+            updateAdmin: function(){
+                
+                this.socket.send(JSON.stringify({ 'message':"code send succes", 'admin':this.admin, 'code':this.codedep }));
+
+            }, 
+            
+                     
+        
+});
+    </script>
 </body>
 </html>
