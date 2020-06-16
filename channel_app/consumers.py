@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 
-from .models import *
+# from .models import *
 
 class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def connect(self):

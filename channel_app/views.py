@@ -9,3 +9,8 @@ def home(request):
 
     data={}
     return render(request, 'home.html',data)
+
+def chat(request):
+
+    data={}
+    return render(request, 'chat.html',data)
