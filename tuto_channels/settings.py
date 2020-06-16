@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     #packages
     'channels',
+    'django_admin_generator',
 ]
 
 MIDDLEWARE = [
