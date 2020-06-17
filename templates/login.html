@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>login</title>
+
+        <!-- bootstrap lien -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+        <!-- VueJS et Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <!-- css loader -->
+        <style>
+          .lds-ellipsis {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+          }
+          .lds-ellipsis div {
+            position: absolute;
+            top: 33px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: rgb(5, 5, 5);
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+          }
+          .lds-ellipsis div:nth-child(1) {
+            left: 8px;
+            animation: lds-ellipsis1 0.6s infinite;
+          }
+          .lds-ellipsis div:nth-child(2) {
+            left: 8px;
+            animation: lds-ellipsis2 0.6s infinite;
+          }
+          .lds-ellipsis div:nth-child(3) {
+            left: 32px;
+            animation: lds-ellipsis2 0.6s infinite;
+          }
+          .lds-ellipsis div:nth-child(4) {
+            left: 56px;
+            animation: lds-ellipsis3 0.6s infinite;
+          }
+          @keyframes lds-ellipsis1 {
+            0% {
+              transform: scale(0);
+            }
+            100% {
+              transform: scale(1);
+            }
+          }
+          @keyframes lds-ellipsis3 {
+            0% {
+              transform: scale(1);
+            }
+            100% {
+              transform: scale(0);
+            }
+          }
+          @keyframes lds-ellipsis2 {
+            0% {
+              transform: translate(0, 0);
+            }
+            100% {
+              transform: translate(24px, 0);
+            }
+          }
+          
+        </style>
+        
+    </head>
+    <body>
+      <div id="test">
+        <div class="general-box">
+            <div class="form-box">
+                <div class="form-header">
+                    <div>
+                        <h3>Connectez-vous</h3>
+                    </div>       
+                </div>
+                <div class="form">
+                  {% csrf_token %}
+                  <div v-if="isSuccess" class="alert alert-success" role="alert">
+                      ${ message }
+                  </div>
+                  <div  v-if="error" class="alert alert-danger" role="alert">
+                      ${ message }
+                  </div>
+                    <input v-model="username" v-on:keyup.enter="login" type="email" placeholder="Entrer votre email" class="email-from">
+                    <input v-model="password" v-on:keyup.enter="login" type="password" placeholder="Entrer votre mot de passe" class="password-from">
+                    <button v-if="boutton" v-on:click="login" type="button" class="form-connexion"> connexion</button>
+                    <div v-if="loader" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                    <!-- <div class="forgotten-password">
+                        <a href="#" class="p-oublie">mot de passe oublié?</a>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </body>
+  <script>
+    // Block Vue JS 
+    new Vue({
+          el: '#test',
+          data: {
+            username : '',
+            password : '',
+            loader : false,
+            boutton : true,
+            isSuccess : false,
+            error : false,
+            base_url : window.location.protocol + "//" + window.location.host + '/',
+          
+          },
+          delimiters : [ "${", "}"],
+          mounted(){
+              
+          },
+          methods: {
+            login:function(){
+              this.loader = true
+              this.boutton = false
+              axios.defaults.xsrfCookieName = 'csrftoken'
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+                axios.post(this.base_url + 'connect', {
+                    username: '' + this.username,
+                    password: '' + this.password,
+                    }).then(response => {
+                        console.log(response) 
+                        if(response.data.success){
+                            this.isSuccess=true
+                            this.error=false
+                            this.loader = true
+                            this.boutton = false
+                            this.message=response.data.message
+                            this.success=response.data.success
+                            window.location.replace("indexAdmin");
+                        }
+                        else{
+                          this.error=true
+                          this.message=response.data.message
+                          this.success=response.data.success
+                          this.isSuccess=false
+                          this.loader = false
+                          this.boutton = true
+                          this.password = ''
+                        }
+                        
+                        console.log("success variable"+this.isSuccess)
+                        // console.log("success variable"+this.error)
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        
+                    })
+            },
+          }
+      });
+  
+  </script>
+</html>
