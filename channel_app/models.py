@@ -61,4 +61,7 @@ class Chat(models.Model):
 
     def __str__(self):
         """Unicode representation of Chat."""
-        return self.user
+        return self.user.username
+
+    def last_10_messages():
+        return Chat.objects.order_by('-date_add').all()[:10]

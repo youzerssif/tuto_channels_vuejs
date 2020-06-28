@@ -1,13 +1,9 @@
 from django.shortcuts import render
 
-from django.core.validators import validate_email
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import AnonymousUser
-from django.db.models import Q
 import json
-from django.http import JsonResponse
-
+from django.utils.safestring import mark_safe
 # Create your views here.
 
 
@@ -21,12 +17,21 @@ def home(request):
 def chat(request):
 
     data={}
-    return render(request, 'chat.html',data)
+    return render(request, 'chats.html',data)
 
 def loginpage(request):
     
     data={}
     return render(request, 'login.html',data)
+
+@login_required
+def room(request, room_name):
+    
+    data={
+        'room_name': mark_safe(json.dumps(room_name)),
+        'username': mark_safe(json.dumps(request.user.username)),
+    }
+    return render(request, 'chat.html',data)
 
 
 
