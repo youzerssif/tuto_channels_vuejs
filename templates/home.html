@@ -31,69 +31,69 @@
 
     <script>
         const app = new Vue({
-        el: "#app",
-        data: {
-            message: "",
-            reponse: [],
-            username:"Annonyme",
-        
+            el: "#app",
+            data: {
+                message: "",
+                reponse: [],
+                username:"Annonyme",
+            
 
-        },
-        delimiters: ["${", "}"],
-        mounted: function() {
+            },
+            delimiters: ["${", "}"],
+            mounted: function() {
+                
+                this.connect()
+                
+            },
+            methods: {
             
-            this.connect()
-            
-        },
-        methods: {
-           
-            connect() {
-                roomName = "hello"
-                this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
-                this.socket.onopen = () => {
-                    this.status = "connected";
-                    console.log("connecte")
-                    
-                    this.socket.onmessage = ({data}) => {
+                connect() {
+                    roomName = "hello"
+                    this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
+                    this.socket.onopen = () => {
+                        this.status = "connected";
+                        console.log("connecte")
                         
-                    //   Recuperation message
-                    wsdata = JSON.parse(data)
-                    console.log(wsdata.message.mes)
-                    this.reponse.push(wsdata.message)    
-                    console.log(this.reponse)
-                   
+                        this.socket.onmessage = ({data}) => {
+                            
+                        //   Recuperation message
+                        wsdata = JSON.parse(data)
+                        console.log(wsdata.message.mes)
+                        this.reponse.push(wsdata.message)    
+                        console.log(this.reponse)
+                    
+                        };
                     };
-                };
-            },
-            disconnect() {
-                this.socket.close();
-                
-                console.log("deconnecte")
-            },
-            
-            
-            sendmessage: function(){
-                
-                data = {
-                    'message':{ 'mes':this.message,
-                    'user':this.username }
-                }
-                    this.socket.send(JSON.stringify(data));
+                },
+                disconnect() {
+                    this.socket.close();
                     
-                    
-                }
-               
-            },
-              
-            updateAdmin: function(){
+                    console.log("deconnecte")
+                },
                 
-                this.socket.send(JSON.stringify({ 'message':"code send succes", 'admin':this.admin, 'code':this.codedep }));
+                
+                sendmessage: function(){
+                    
+                    data = {
+                        'message':{ 'mes':this.message,
+                        'user':this.username }
+                    }
+                        this.socket.send(JSON.stringify(data));
+                        
+                        
+                    }
+                
+                },
+                
+                updateAdmin: function(){
+                    
+                    this.socket.send(JSON.stringify({ 'message':"code send succes", 'admin':this.admin, 'code':this.codedep }));
 
-            }, 
+                }, 
+                
+                        
             
-                     
-        
-});
+    });
     </script>
 
 </body>
